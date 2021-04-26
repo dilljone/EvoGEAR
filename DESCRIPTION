@@ -1,0 +1,28 @@
+Package: EB-GEAR (Evolutionary, BioGeography and Ecology Analyses in R)
+Title: A package for aiding biogeograpic and eco-evolutionary analyses
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Dillon",
+           family = "Jones",
+           role = c("aut", "cre"),
+           email = "dilljone96@gmail.com",
+           comment = c(ORCID = "YOUR-ORCID-ID"))
+Description: Many projects involve using ecological data (e.g., species occurrence data, trait/morphology information), 
+            geographical data (e.g. GIS, BIOCLIM), and Evolutional data (e.g. phylogenies, fossil data).
+            Often, these projects require utilizing multiple sets of software (ArcGIS, R, and Python), a preponderance of different R packages, 
+            or custom solutions for simple operations (e.g., combining point data with range maps, estimating diversity across your range). 
+            Further, many important first steps for properly utilizing these data, such as cleaning occurence information from public databases like GBIF,
+            are either uneccessarily complex or not well developed enough for the "average" R user (Average being a researcher with moderate skill in using R, 
+            but not with writing custom functions, crafting complex solutions, or manipulating custom/complex dataclasses).
+            
+            EcoGeoEvo aims to 1) Create a set of utility functions for common issues, tasks, and outputs/inputs in eco-geo-evo studies 
+                              2) Streamline biogeographic/eco-evolutionary analyses by creating functions for simple analyses that often need custom functions
+                              3) Enable rather than constrain more advanced R users who wish to "tinker" with pipelines, analyses, and utility functions.
+
+                              
+License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
+    license
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
