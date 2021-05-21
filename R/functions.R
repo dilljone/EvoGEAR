@@ -58,20 +58,6 @@ clean_gbif <- function(df, filter = NULL, resolveTaxonomy = FALSE, resolveID = N
     cc_zero() %>%
     cc_dupl()
 
-  #create taxon list
-  taxon <- as.character(df$species)%>%
-    unique()
-
-  if(resolveTaxonomy == TRUE){
-    print("Now Resolving Taxonomy")
-    #using taxize to clean the scientific names and merge
-    new_tax <- taxize::gnr_resolve(taxon, best_match_only = TRUE,
-                                   canonical = TRUE, http = 'post', data_source_ids = as.numeric(resolveID))
-
-    df <-merge(df,new_tax, by.x = 'species', by.y = 'user_supplied_name')
-  }
-
-
   return(df)
 }
 
@@ -179,8 +165,6 @@ KDE_filter <- function(points, unispecies = TRUE, low_r = .25, up_r = .75){
 ###Create circles around points and/or alpha polygons(NEED TO TEST)#####
 # Points as a dataframe with columns species, x, and y
 # map created from map function (used to crop the circles to a landmass)
-
-
 points2Poly <- function(points,x = 'x', y = 'y', species = 'species', map,
                         alpha = FALSE, a = 1,
                         type = 'All', buffer_m = 1000){
@@ -415,7 +399,7 @@ optimal_div <- function(spdf_in, min,max) {
 }
 
 
-### Creates list of where species intersect with what chunks####
+### Creates list of where species intersect with what chunks###
 chunk_pres_ab <- function(spdf_in, raster_size = numeric(),species_spdf){
 
   require('sf')
