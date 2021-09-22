@@ -398,7 +398,6 @@ optimal_div <- function(spdf_in, min,max) {
   return(list(output_mat,check_mat))
 }
 
-
 ### Creates list of where species intersect with what chunks###
 chunk_pres_ab <- function(spdf_in, raster_size = numeric(),species_spdf){
 
@@ -439,3 +438,149 @@ chunk_pres_ab <- function(spdf_in, raster_size = numeric(),species_spdf){
 
 }
 
+###Calculate the instability index from Mesquite
+instability_index <- function(phy_list = as.list()){
+  #Need to get a dataframe that is taxa by distance
+  #the Index for each taxon in in the set of trees
+  #that is summed across all distances between trees
+  #The data matrix can be rows of each species and the columnes
+  #can be the same species replicated for all trees
+  require(ape)
+
+  I_mat <- matrix()
+
+  for(i in 1:length(phy_list)){
+    j = i+1
+
+    if (j>length(phy_list)){
+      break()
+    }
+    #create Dix and Diy and reorder them for consistency
+    #Need to figure out if rowname sort is required but lol fuck it for now
+    Dix<- ape::cophenetic.phylo(phy_list[[i]])%>%
+      as.data.frame(.)%>%
+      select(order(colnames(.)))
+
+    Diy <- ape:: cophenetic.phylo(phy_list[[j]])%>%
+      as.data.frame(.)%>%
+      select(order(colnames(.)))
+
+    numer <- abs(Dix-Diy)
+    denom <- (Dix-Diy)^2
+
+    comp_mat <- (numer/denom) %>%
+      rename_all(.,function(x) paste0(colnames(.),"_phylo_",j))
+
+    I_mat <- cbind(I_mat,comp_mat)
+
+  }
+
+  index <- sapply(I_mat[,-1], function (x) as.numeric(gsub("NaN",0,x)))
+  index <- rowSums(index)
+  names(index) <- rownames(I_mat)
+
+  return(index)
+
+}
+
+### Calculate the Consensus Fork Index
+calc_CFI <- function(phy_list,
+                     ranges = c(.5,.75,.9)){
+  require(ape)
+
+  out_list <- list()
+  list_names <- vector()
+  for(i in 1:length(ranges)){
+    con_tree <- consensus(phy_list,p = ranges[i])
+    boot <- prop.clades(con_tree,phy_list)
+    CFI <- Nnode(con_tree)/(length(con_tree$tip.label)-2)
+    out_list <- append(out_list,CFI)
+    list_names <- append(list_names,paste0("CFI_",gsub("0.","",
+                                                       as.character(ranges[i]))))
+  }
+  names(out_list) <- list_names
+  return(out_list)
+}
+
+
+#Detect rogue taxa and highlight. Uses the custom function instability_index() and calc_CFI()
+
+detect_rogue_taxa <- function(phy_list = as.list(), #Feed in a list of bootstrap trees
+                              method = "percent", #need a series of options
+                              percent_threshold = .10,
+                              drop_threshold = .1){
+
+  require(ape)
+  require(tidyverse)
+
+  CFI_full <-  calc_CFI(phy_list)
+  insta_index <- instability_index(phy_list)
+
+  switch(method,
+         "percent" = {
+           #percent removes tips based on percent_threshold
+           #and their instability index scores
+           #i.e. a percent_threshold of .1 would remove the 10% of worst scoring tips
+           insta_index <-data.frame(index = sort(insta_index),
+                                    tips = names(insta_index))
+           num_end <- ceiling((1-percent_threshold) * nrow(insta_index))
+           tips_kept <- insta_index[1:num_end,]
+           tips_removed <- insta_index[num_end+1:nrow(insta_index),]
+           tree_sub = list()
+
+           for (i in 1:length(phy_list)){
+             tree_sub[[i]] <- drop.tip(phy_list[[i]],tips_removed$tips)}
+           return(list(insta_index,tips_kept, tips_removed,tree_sub,num_end))
+
+         },
+
+         "no_drop" = {
+           #no drop drops no taxa and just returns the indeces
+           return(insta_index)},
+
+         "iterative" = {
+           #iterative drops the worst performing taxa
+           #then recalculates CFI
+           #then selectively drops taxa based on drop_threshold
+           #need to add a way to not go through every single taxa
+
+           insta_index <-data.frame(index = sort(insta_index),
+                                    tips = names(insta_index))
+
+           tips_remove <- data.frame(taxa = as.character(),
+                                     CFI_50 = as.numeric(),
+                                     CFI_75 = as.numeric(),
+                                     CFI_50 = as.numeric())
+           for(i in 1:nrow(insta_index))
+           {
+             #sub_tree <- drop.tip(phy_list[[i]],insta_index[i,2])
+             tree_sub <- list()
+
+             for (j in 1:length(phy_list)){
+               tree_sub[[j]] <- drop.tip(phy_list[[j]],insta_index[i,2])
+             }
+
+             CFI_sub <- calc_CFI(tree_sub)
+
+             CFI_diff_50 <- CFI_sub[[1]] - CFI_full[[1]]
+             CFI_diff_75 <- CFI_sub[[2]] - CFI_full[[2]]
+             CFI_diff_95 <- CFI_sub[[3]] - CFI_full[[3]]
+
+             if(CFI_diff_95 >= drop_threshold |
+                CFI_diff_75 >= drop_threshold |
+                CFI_diff_50 >= drop_threshold){
+
+               tips_remove <- rbind(tips_remove,
+                                    data.frame(insta_index[i,2],
+                                               CFI_diff_50,
+                                               CFI_diff_75,
+                                               CFI_diff_95))
+
+             }
+           }
+           return(list(tips_remove,CFI_full))
+         }
+  )
+
+  return(list(insta_index,tips_kept, tips_removed,tree_sub,num_end))
+}
