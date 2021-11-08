@@ -1,0 +1,90 @@
+---
+title: "Notes and Overview"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Intro
+
+## Purpose of package
+
+EvoGear is being created based on the need to make custom scripts for my current thesis work. Evolutionary geography and ecology analyses require the manipulation of many disparate types of data (Geographic, phylogenetic, occurrence, trait etc.). Further, many standardized datasets or data types (GBIF, IUCN; Shapefiles, point occurence) require some level of manipulation or cleaning before they can be used. While many packages contain several functions for these issues, they are spread throughout many packages, can be difficult to find, or do not produce outputs suitable for these kind of analyses.This package aims to create scripts specifically for data analysis/manipulation for evolutionary biogeography/ecological analyses. Proposed scripts are outlined below
+
+# Types of scripts
+
+## Occurrence
+
+**Occurence datasets are crucial for EvoGeo analyses. However, datasets are messy, in disparate formats, or require some type of manipulation before use. These functions largely deal with cleaning data and data manipulation**
+
+Clean_GBIF: Function specific for cleaning Raw GBIF occurrence datasets
+
+clean_occ: Subfunction of Clean_GBIF that can be suited for any point occurrence dataset
+
+KDE_Filter: filter occurence datasets based on Kernel Density Estimates
+
+points2poly: Convert point occurence data into polygons by expanding points into circlesand combining
+
+combine_points_polygons : Combines point occurence data (e.g. GBIF) with polygon data (e.g. IUCN)
+
+## Phylogenetic
+
+**Not sure if I want to keep. These feel somewhat out of place in its current state. Need more functions specifically for phylogenetic/geography stuff**
+
+Rogue_taxa: detect rogue taxa across a tree
+
+Instability_index: Instability of particular taxon calculated
+
+Calc_CFI: Consensus Fork Index calculation.
+
+iterate_genbank: Iterate through Genbank based on a vector of search terms (e.g. family) and pull them all into FASTA files
+
+## Taxonomic
+
+**When using data from many different sources, often the taxonomy will be different between these sources. As such, Taxonomy validation is a useful tool for increasing data coverage and accuracy. These scripts are meant to assist in the taxonomy validation process.**
+
+webscrape_frost: Webscraping function for querying AMNH frost amphibians of the world
+
+Several subfunctions here as well
+
+Combinetaxon validates: Combines taxon validation from multiple sources adn identify discrepencies
+
+Identify_syno_problems: Often when working with synonym datasets, you may encounter reciprocal synonym-binomial pairs (e.g. B. aridus -\> B. major and B. major -\> B. aridus). This function identifies those.
+
+## Geographic
+
+Manipulation of bioclim var?
+
+create_map: Creates a map with dissolved interior lines based on user inputted country names
+
+## Analyses
+
+Pairwise_Allopatry: detects degree of allopatry/sympatry between all binomial pairs
+
+Allopatry across tree: Still working on this one. Need to think it through more
+
+phylosignalPrep: Combining datasets
+
+## Utility
+
+**These are functions that are meant for basic utility. Simple data manipulation, metrics, or columns of data**
+
+seq_0: Sequence function that includes last records of sequence by function
+
+SPDF -\> SF
+
+Convert all objects to simple features (need to create functions that convert them)
+
+combining polygons and stuff was tricky
+
+setting up regions for stuff
+
+getting data ready for BIOGEOBEARS
+
+Should setup data for SDMs as well
+
+Maybe just include the sdm calculation
+
+Alphahull from points
