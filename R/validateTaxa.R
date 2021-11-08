@@ -1,68 +1,86 @@
-taxa <- unique(species_gbif_Iucn$x)
+validate_taxa <- function(input = as.list()){
+  require(tidyverse)
 
-validateTaxa <- function(taxa){
+  temp <- data.frame("binomial" = as.character(),
+                     "synonym" = as.character(),
+                     'source' = as.character())
 
-#using taxize to clean the scientific names and merge
+  for(i in 1:length(input)){
 
-    syntaxa  <- taxize::synonyms(taxa, db = "eol", rows = 1)
+    temp <- rbind(temp, data.frame(binomial = input[[i]]$binomial,
+                                   synonym = input[[i]]$synonym,
+                                   source = rep(names(input[i]),nrow(input[[i]]))))
+  }
 
-    df_na <- ""
+  temp <- unique(temp)
 
-    df_tax <- data.frame(sub_tsn=character(),acc_name=character(),
-                         acc_tsn=character(),acc_author=character(),
-                         syn_author=character(),syn_name=character(),syn_tsn=character())
+  output <- data.frame(matrix(nrow = length(unique(temp$binomial)), ncol = length(input)+1))
+  names(output)[1] <- "Input_name"
+  names(output)[2:ncol(output)] <- names(input)
 
-    df_syn <- data.frame(sub_tsn =character(),acc_tsn=character(),
-                         syn_author=character(),syn_name=character(),syn_tsn=character())
+  output$Input_name <- unique(temp$binomial)
 
-    for(i in 1:length(syntaxa)){
-
-      if(i==1){bool = 0}
-
-      if(is.na(syntaxa[i])){
-
-        #vector of species not found in ITIS
-        df_na[length(df_na)+1] <- names(syntaxa[1])
-
-      }else{
-
-        temp <- data.frame(syntaxa[i])
-
-        if(ncol(temp) == 7){
-          print('here')
-          if(bool == 0){
-
-            #needed to make temp and change names because each df has unique column headers
-            df_tax_temp = temp
-            names(df_tax_temp) = c('sub_tsn','acc_name','acc_tsn','acc_author','syn_author','syn_name','syn_tsn')
-          }
-
-          else{df_tax <- rbind(df_tax,setNames(temp,names(df_tax_temp)))}
-
-          bool = bool + 1
-
-        }else{
-          #logic for species found. Currently have logic for correct name but with synonyms. No code present for
-          #correct name but no synonyms (returns 0col/0row dataframe)
-
-          #df_syn_temp = temp
-          #names(df_syn_temp) = c('sub_tsn','acc_tsn','syn_author','syn_name','syn_tsn')
-          #df_syn <- rbind(df_syn,setNames(temp,names(df_syn_temp)))
-        }
-      }
+  for(i in 1:nrow(output)){
+    for(j in 1:length(input)){
+      if(output[i,1] %in% input[[j]]$binomial){
+        output[i,j+1] = 1
+      }else(output[i,j+1] = 0)
     }
-    names(df_tax)[6] = 'species'
+  }
 
+  temp <- temp[which(is.na(temp$synonym)| temp$synonym != ""),]
 
-
-  return(list(df_syn,df_tax,df_na))
-
+  return(list(output,temp))
 }
 
-?taxize::synonyms
-test <- validateTaxa(phylo_species[1:1000,])
+taxa_discrepency <- function(input = as.data.frame()){
 
+  #requires input list where first column is accepted name, second column is synonym, third column is source
+  #need to add a third column check skip
 
-test<- taxize::synonyms(phylo_species[1:1000,], db = "eol")
+  require(tidyverse)
 
-save(out_phylo_0_1k,out_phylo_1_2k,out_phylo_2_3k,out_phylo_3_4k,out_phylo_4_5k,out_phylo_6_7k,out_phylo_7_8k,o)
+  temp = input
+  rownames(temp) <- 1:nrow(temp)
+  #create blank data frame
+  matches <- data.frame(binomial= as.character(),
+                        synonym = as.character(),
+                        source = as.character())
+
+  #iterate through input list
+  for(i in 1:nrow(temp)){
+
+    row_num <- NA
+    row_num <- match(temp[i,2],temp$binomial)
+
+    if(is.na(row_num)){}else{
+
+      matches <- rbind(matches, temp[i,])
+      matches <- rbind(matches, temp[row_num,])
+    }
+  }
+
+  matches$note <- rep("",nrow(matches))
+  matches <- matches %>%
+    distinct(binomial,synonym,.keep_all = TRUE)
+
+  for(i in 1:nrow(matches)){
+    row_num <- NA
+    row_num <- match(matches[i,2],matches$binomial)
+    if(is.na(row_num)){  }else{
+      if(matches[i,3] == matches[row_num,3]){
+        matches[i,4] = "check"
+      }else{
+        matches[i,4] = "Synonym discrepency"
+      }}
+
+    if(matches[i,4] == ""){matches[i,4] = "Binomial discrpency"}
+
+    if(nrow(matches[which(matches$binomial == matches[i,2]),])>1){
+      matches[i,4] = "Remove. Cannot discern accepted name."
+    }
+
+  }
+
+  return(matches)
+}
