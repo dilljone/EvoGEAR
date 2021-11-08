@@ -2,11 +2,10 @@
 
 ###Cleaning RawGBIF Data####
 
-clean_gbif <- function(df, filter = NULL, resolveTaxonomy = FALSE, resolveID = NULL){
+clean_gbif <- function(df, filter = NULL){
 
   require(tidyverse)
   require(CoordinateCleaner)
-  require(taxize)
   #filter by Genus
 
   print(nrow(df))
@@ -485,7 +484,7 @@ instability_index <- function(phy_list = as.list()){
 
 ### Calculate the Consensus Fork Index
 calc_CFI <- function(phy_list,
-                     ranges = c(.5,.75,.9)){
+                     ranges = c(.5,.75,.95)){
   require(ape)
 
   out_list <- list()
@@ -550,7 +549,7 @@ detect_rogue_taxa <- function(phy_list = as.list(), #Feed in a list of bootstrap
            tips_remove <- data.frame(taxa = as.character(),
                                      CFI_50 = as.numeric(),
                                      CFI_75 = as.numeric(),
-                                     CFI_50 = as.numeric())
+                                     CFI_95 = as.numeric())
            for(i in 1:nrow(insta_index))
            {
              #sub_tree <- drop.tip(phy_list[[i]],insta_index[i,2])
@@ -583,4 +582,102 @@ detect_rogue_taxa <- function(phy_list = as.list(), #Feed in a list of bootstrap
   )
 
   return(list(insta_index,tips_kept, tips_removed,tree_sub,num_end))
+}
+
+iterate_genbank <- function(search_terms, by = 1000,
+                            seq_length_max = 30000,
+                            extra_term = ""){
+
+  require(rentrez)
+  require(tidyverse)
+
+  #Custom Sequence Function that ensures last sequences
+  # If there are 369 sequences and you go by 100s, then the last 69 would not be included
+  seq0 <- function(from = 1, to = 1, by = 1, incLast = TRUE){
+    out = do.call(what = seq, args = list(from, to, by))
+    if (incLast & to%%by != 0){
+      out = c(out, tail(out, 1) + by)
+    }
+    return(out)
+  }
+
+  #iterate through each search term in list
+  for(i in 1:length(search_terms)){
+
+    term <- paste0("('",search_terms[i],"'","[Organism] OR ", search_terms[i],
+                   "[All Fields])"," AND (1 [SLEN] : ",seq_length_max,"[SLEN])",extra_term)
+
+    search_res <- entrez_search(db="nuccore", term=term,use_history = TRUE)
+    #printing to make it look nicer. Adding progress bar as well
+
+    print(paste0("Now Quering: ",search_terms[i], ". ", search_res$count, " records found"))
+    pb <- txtProgressBar(min = 0, max = search_res$count, style = 3, width = 30, char = "\U1F438")
+
+    #Ifelse to fetch if few sequences
+    if(search_res$count<by){
+
+      fetch <- entrez_fetch(db = "nuccore", #id = search_res$ids[1:length(search_res$ids)],
+                            rettype = "fasta", web_history = search_res$web_history)
+
+      write(fetch, paste0(search_terms[i],"_FASTA.fasta"), sep = "\n")
+      setTxtProgressBar(pb,search_res$count)
+
+    }else{
+      #else is for larger amount of sequences
+      start = by
+      fetch <- entrez_fetch(db = "nuccore", #id = search_res$ids[1:length(search_res$ids)],
+                            rettype = "fasta", retmax = by,
+                            web_history = search_res$web_history)
+
+      write(fetch, paste0(search_terms[i],"_FASTA.fasta"), sep = "\n")
+
+      setTxtProgressBar(pb,by)
+
+      #starting to pull sequences every by
+
+      for(j in seq0(from = start,to = search_res$count, by = by)){
+
+        setTxtProgressBar(pb,j)
+
+        if(j==by){next}else{
+
+          fetch <- entrez_fetch(db = "nuccore", #id = search_res$ids[start:j],
+                                rettype = "fasta", web_history = search_res$web_history,
+                                retmax = by, retstart = start)
+
+          write(fetch, paste0(search_terms[i],"_FASTA.fasta"),sep = "\n", append = TRUE)
+          start = j
+        }
+      }
+    }
+    #finish off the ProgressBar
+    setTxtProgressBar(pb,search_res$count)
+    close(pb)
+  }
+}
+
+sp_list_amnh <- function(data){
+  library(tidyverse)
+  library(stringr)
+  library(magrittr)
+
+  data_out <-
+    data %>%
+    mutate("ID" = 1:nrow(data)) %>%
+    mutate('Raw' = trimws(data[,1]))%>%
+    #select('trimmed')%>%
+    mutate('level' = substr(.$Raw,1,str_locate(.$Raw,":")-1))%>%
+    mutate('value' = (trimws(str_split(.$Raw,":",n = 2, TRUE)[,2])))%>%
+    mutate('Order' = ifelse(level == 'Order',value,'-'),
+           'Superfamily' = ifelse(level == 'Superfamily',value,'-'),
+           'Family' = ifelse(level == 'Family',value,'-'),
+           'Subfamily' = ifelse(level == 'Subfamily',value,'-'),
+           'Genus' = ifelse(level == 'Genus',value,'-'),
+           'Species' = ifelse(level == 'Species',value,'-'))%>%
+    mutate('binomial' = ifelse(level == 'Species',
+                               (substr(Species,1,
+                                       (str_locate(Species,"^([^ ]+[ ]+[^ ]+)[ ]")[,2]))),Species))%>%
+    mutate(binomial = str_trim(binomial))%>%
+    select(ID,Raw, level, Order, Superfamily,Family,Subfamily,Genus,Species,binomial)
+  return(list(data_out,unique(data_out$binomial)))
 }
