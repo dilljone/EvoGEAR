@@ -1,5 +1,5 @@
-Package: EB-GEAR (Evolutionary, BioGeography and Ecology Analyses in R)
-Title: A package for aiding biogeograpic and eco-evolutionary analyses
+Package: EBGear
+Title: EBGEAR (Evolutionary, BioGeography and Ecology Analyses in R): A package for aiding biogeograpic and eco-evolutionary analyses
 Version: 0.0.0.9000
 Authors@R: person(given = "Dillon",
            family = "Jones",
@@ -16,11 +16,11 @@ Description: Many projects involve using ecological data (e.g., species occurren
             EcoGeoEvo aims to 1) Create a set of utility functions for common issues, tasks, and outputs/inputs in eco-geo-evo studies 
                               2) Streamline biogeographic/eco-evolutionary analyses by creating functions for simple analyses that often need custom functions
                               3) Enable rather than constrain more advanced R users who wish to "tinker" with pipelines, analyses, and utility functions.
-
-                              
 License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
     license
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
+Imports: tidyverse
+  

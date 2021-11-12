@@ -27,7 +27,9 @@ KDE_Filter: filter occurence datasets based on Kernel Density Estimates
 
 points2poly: Convert point occurence data into polygons by expanding points into circlesand combining
 
-combine_points_polygons : Combines point occurence data (e.g. GBIF) with polygon data (e.g. IUCN)
+combine_points_polygons: Combines point occurence data (e.g. GBIF) with polygon data (e.g. IUCN)
+
+Combine_ranges_based_on_tree: iterate through tree and combine polygon ranges together. Need to weight them based on overlapping areas. Troubleshooting sdfasdsf;kladfsskj;ak;jafskj;lagskj;lkj;lj
 
 ## Phylogenetic
 
@@ -88,3 +90,9 @@ Should setup data for SDMs as well
 Maybe just include the sdm calculation
 
 Alphahull from points
+
+There was some shit you had to do with your polygons cause of clipping or some BS
+
+How about a general function for processing any type of polygon and showing what is missing, what is needed, etc etc?
+
+Attaching trait data to occurence data (shouldnt need as is simple, but is it actually?)

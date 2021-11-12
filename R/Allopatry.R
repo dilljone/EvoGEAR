@@ -21,56 +21,54 @@ library(tidyverse)
 
 #First Step. Adjacency matrix of degree overlap
 # General Idea is to iterate over the SPDF and create degree overlap matrix for all species
-
-nrow(spec_poly)
-
-for (i in 1:10){
-  for(j in 1:10){
-
-    test <- raster::intersect(spec_poly[i,],spec_poly[j,])
-    plot(spec_poly[spdf$binomial == "Agalychnis_callidryas",], col = 'red')
-    plot(spec_poly[spec_poly$binomial == "Bolitoglossa_mexicana",], col = 'blue', add = TRUE)
-    plot(test, col = 'purple', add = TRUE)
-  }
-}
-
-
-test_ <- sf::st_intersects(spdf[spdf$binomial == "Agalychnis_callidryas",],
-                           spdf[spdf$binomial == "Bolitoglossa_mexicana",])
-test_
-test_ <- raster::intersect(spec_poly[spec_poly$binomial == "Agalychnis_callidryas",],
-                           spec_poly[spec_poly$binomial == "Bolitoglossa_mexicana",])
-
-
-rownames(inter_matrix[,1]) <- spec_poly[1,]$binomial
-intersect_mat <- as.matrix()
-inter_matrix <- data.frame()
-colnames(inter_matrix)[1]  <- "test"
-inter <- raster::crop(spec_poly[1,],spec_poly[1,])
-
-test <- as(spec_poly, "sf")
-(test[4,]$binomial)
-list(poly_test$binomial,poly_test$binomial)
-rownames(inter_matrix)[1]
-
-spdf <- as(poly_test,"sf")
-sf::st_crs(spdf) <- "+init=epsg:4326"
-
-area_over <- sum(sf::st_area(suppressWarnings(sf::st_intersection(spdf[1507,1], spdf[1517,1]))))
-plot(spdf[1517,3])
-lwgeom::lwgeom_make_valid(spdf[1507,])
-sf::st_
-
-x <- raster::raster(ncol = 5, nrow = 5, ext = raster::extent(poly_test), vals = 1)
-plot(x)
-plot(poly_test[5,], add = TRUE)
-
-
-inter <- sf::st_intersects(x_sf[,], spdf[])
-
-
-x_sf <- as(x, "SpatialPolygonsDataFrame")%>%
-  st_as_sf()
+#
+# for (i in 1:10){
+#   for(j in 1:10){
+#
+#     test <- raster::intersect(spec_poly[i,],spec_poly[j,])
+#     plot(spec_poly[spdf$binomial == "Agalychnis_callidryas",], col = 'red')
+#     plot(spec_poly[spec_poly$binomial == "Bolitoglossa_mexicana",], col = 'blue', add = TRUE)
+#     plot(test, col = 'purple', add = TRUE)
+#   }
+# }
+#
+#
+# test_ <- sf::st_intersects(spdf[spdf$binomial == "Agalychnis_callidryas",],
+#                            spdf[spdf$binomial == "Bolitoglossa_mexicana",])
+# test_
+# test_ <- raster::intersect(spec_poly[spec_poly$binomial == "Agalychnis_callidryas",],
+#                            spec_poly[spec_poly$binomial == "Bolitoglossa_mexicana",])
+#
+#
+# rownames(inter_matrix[,1]) <- spec_poly[1,]$binomial
+# intersect_mat <- as.matrix()
+# inter_matrix <- data.frame()
+# colnames(inter_matrix)[1]  <- "test"
+# inter <- raster::crop(spec_poly[1,],spec_poly[1,])
+#
+# test <- as(spec_poly, "sf")
+# (test[4,]$binomial)
+# list(poly_test$binomial,poly_test$binomial)
+# rownames(inter_matrix)[1]
+#
+# spdf <- as(poly_test,"sf")
+# sf::st_crs(spdf) <- "+init=epsg:4326"
+#
+# area_over <- sum(sf::st_area(suppressWarnings(sf::st_intersection(spdf[1507,1], spdf[1517,1]))))
+# plot(spdf[1517,3])
+# lwgeom::lwgeom_make_valid(spdf[1507,])
+# sf::st_
+#
+# x <- raster::raster(ncol = 5, nrow = 5, ext = raster::extent(poly_test), vals = 1)
+# plot(x)
+# plot(poly_test[5,], add = TRUE)
+#
+#
+# inter <- sf::st_intersects(x_sf[,], spdf[])
+#
+#
+# x_sf <- as(x, "SpatialPolygonsDataFrame")%>%
+#   st_as_sf()
 
 
 Iterate_intersect <- function(spdf_in, raster_size = numeric()){
@@ -219,73 +217,73 @@ optimal_div <- function(spdf_in, min,max) {
   return(list(output_mat,check_mat))
 }
 
-opt_div <- optimal_div(agg,1,50)
-
-
-check <- opt_div[[2]]
-opt_div <- opt_div[[1]]
-plot(opt_div[,1], opt_div[,2],
-     main = "Optimal number of pairwise calculation divisions",
-     xlab = "Number of divisions",
-     ylab = "Number of calculations to perform")
-
-arrows(x1 = opt_div[opt_div[,2] == min(opt_div[,2]),1],
-       y1 = min(opt_div[,2]), col = 'blue',
-       x0 = opt_div[opt_div[,2] == min(opt_div[,2]),1]-1,
-       y0 = min(opt_div[,2])-1)
-
-?arrows
-opt_div[opt_div[,2] == min(opt_div[,2]),1]
-min(opt_div[,2])
-out <- Iterate_intersect(agg,5)
-
-poly_test_sub <- subset(poly_test, poly_test@data$id_no %in% unique(poly_test@data[,c(1,2,7)]$binomial)$id_no)
-
-poly_test <- poly_test[order(poly_test$binomial,poly_test$year_),]
-
-agg <- raster::aggregate(poly_test,by = c('id_no','binomial','year_'), dissolve = TRUE)
-agg <- agg[order(agg$binomial,agg$year_, decreasing = TRUE),]
-agg@data$dupe <- duplicated(agg$binomial)
-agg <- agg[agg$dupe == FALSE,]
-
-merge()
-
-
-
-
-
-
-
-length(poly_test)
-
-for(j in 1:nrow()){
-  for(i in 1:nrow(spec_poly)){
-    print(c(i,":",j))
-    inter <- raster::crop(spec_poly[i,],spec_poly[j,])
-
-    if(is.null(inter)){
-      area <- 0
-    }else{
-      area <- sum(raster::area(inter))
-    }
-    print(area)
-    inter_matrix[i,j] <-  area
-    rownames(inter_matrix)[i] <- spec_poly[i,]$binomial
-    colnames(inter_matrix)[j] <- spec_poly[j,]$binomial
-    area ==0
-  }
-}
-
-rownames(inter_matrix)
-
-poly_test <- spec_poly_AS[spec_poly_AS$binomial %in% phylo_AS_raw$tip.label,]
-
-testing <- sf::st_intersection(test[1,1], test[1,1])
-sf::st_area(testing)
-apply(spec_poly[[]],1, function(x) print(x))
-
-test <- as(spec_poly, "sf")
-plot(test[2,1])
-
-test <- sf::st_as_sf(get(spec_poly[[1]]))
-colname
+# opt_div <- optimal_div(agg,1,50)
+#
+#
+# check <- opt_div[[2]]
+# opt_div <- opt_div[[1]]
+# plot(opt_div[,1], opt_div[,2],
+#      main = "Optimal number of pairwise calculation divisions",
+#      xlab = "Number of divisions",
+#      ylab = "Number of calculations to perform")
+#
+# arrows(x1 = opt_div[opt_div[,2] == min(opt_div[,2]),1],
+#        y1 = min(opt_div[,2]), col = 'blue',
+#        x0 = opt_div[opt_div[,2] == min(opt_div[,2]),1]-1,
+#        y0 = min(opt_div[,2])-1)
+#
+# ?arrows
+# opt_div[opt_div[,2] == min(opt_div[,2]),1]
+# min(opt_div[,2])
+# out <- Iterate_intersect(agg,5)
+#
+# poly_test_sub <- subset(poly_test, poly_test@data$id_no %in% unique(poly_test@data[,c(1,2,7)]$binomial)$id_no)
+#
+# poly_test <- poly_test[order(poly_test$binomial,poly_test$year_),]
+#
+# agg <- raster::aggregate(poly_test,by = c('id_no','binomial','year_'), dissolve = TRUE)
+# agg <- agg[order(agg$binomial,agg$year_, decreasing = TRUE),]
+# agg@data$dupe <- duplicated(agg$binomial)
+# agg <- agg[agg$dupe == FALSE,]
+#
+# merge()
+#
+#
+#
+#
+#
+#
+#
+# length(poly_test)
+#
+# for(j in 1:nrow()){
+#   for(i in 1:nrow(spec_poly)){
+#     print(c(i,":",j))
+#     inter <- raster::crop(spec_poly[i,],spec_poly[j,])
+#
+#     if(is.null(inter)){
+#       area <- 0
+#     }else{
+#       area <- sum(raster::area(inter))
+#     }
+#     print(area)
+#     inter_matrix[i,j] <-  area
+#     rownames(inter_matrix)[i] <- spec_poly[i,]$binomial
+#     colnames(inter_matrix)[j] <- spec_poly[j,]$binomial
+#     area ==0
+#   }
+# }
+#
+# rownames(inter_matrix)
+#
+# poly_test <- spec_poly_AS[spec_poly_AS$binomial %in% phylo_AS_raw$tip.label,]
+#
+# testing <- sf::st_intersection(test[1,1], test[1,1])
+# sf::st_area(testing)
+# apply(spec_poly[[]],1, function(x) print(x))
+#
+# test <- as(spec_poly, "sf")
+# plot(test[2,1])
+#
+# test <- sf::st_as_sf(get(spec_poly[[1]]))
+# colname
