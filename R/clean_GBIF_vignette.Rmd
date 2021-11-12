@@ -1,0 +1,145 @@
+---
+title: "Cleaning GBIF Data"
+author: "Dillon Jones"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+
+library(tidyverse)
+```
+
+Clean your codeasasdasd
+
+Load in Data
+
+```{r}
+
+<<<<<<< HEAD
+<<<<<<< HEAD
+gbif_raw <- read.delim(system.file('extdata','gbif.csv', package = "EBGear"))
+
+
+gbif_1 <- clean_gbif(gbif_raw)
+=======
+gbif_raw <- ressad.delim("data/gbif.csv", header = TRUE, sep="\t")
+
+
+gbif_1 <- clean_gbif(df_raw)
+>>>>>>> fbdf935 (Starting up vignette for cleaning gbif data in order to troubleshoot some code)
+=======
+gbif_raw <- read.delim(system.file('extdata','gbif.csv', package = "EBGear"))
+
+
+gbif_1 <- clean_gbif(gbif_raw)
+>>>>>>> a80744f (Improved speed of points2poly by commenting out the line checking if points were found within map boundaries. The cleaning stage should account for this, not the points 2 poly stage. Need to add to Clean_GBIF.)
+
+
+df_kde <- data.frame(species = gbif_1$species, 
+                     decimallongitude = gbif_1$decimallongitude,
+                     decimallatitude = gbif_1$decimallatitude)
+
+gbif_2 <- KDE_filter(df_kde,FALSE, rec_min = 3)
+
+```
+
+## Points to Poly
+
+Here we introduce the function points_to_poly.
+
+This function intends to take a dataframe of points and convert them into polygons. This can be done either by creating a circular plane around each point given a set diameter, through Alpha Hull, or via MCP.
+
+<<<<<<< HEAD
+<<<<<<< HEAD
+It requires a few argumeasd:
+=======
+It requires a few argumeasdfnts:
+>>>>>>> fbdf935 (Starting up vignette for cleaning gbif data in order to troubleshoot some code)
+=======
+It requires a few argumeasd:
+>>>>>>> a80744f (Improved speed of points2poly by commenting out the line checking if points were found within map boundaries. The cleaning stage should account for this, not the points 2 poly stage. Need to add to Clean_GBIF.)
+
+```{r}
+  points2Poly <- function(points,x = 'x', y = 'y', species = 'species', map,
+                        alpha = FALSE, a = 1,
+                        type = 'All', buffer_m = 1000){...}
+```
+
+<<<<<<< HEAD
+<<<<<<< HEAD
+-   points
+
+    -   a 3 column dataframe of points, where the columns are species, x, and y
+
+-   x
+
+    -   the column containing the x coords
+=======
+-   points
+
+    -   a 3 column dataframe of points, where the columns are species, x, and y
+
+-   x
+
+<<<<<<< HEAD
+    -    the column containing the x coords
+>>>>>>> a80744f (Improved speed of points2poly by commenting out the line checking if points were found within map boundaries. The cleaning stage should account for this, not the points 2 poly stage. Need to add to Clean_GBIF.)
+=======
+    -   the column containing the x coords
+>>>>>>> 9efb85c (properly changed name to evogear)
+
+-   y
+
+    -   the column containing the y coords
+
+-   species
+
+    -   the column containing the species
+
+-   map
+
+    -   the boundary map for the species (can omit, but reccomended to use map_create function or provide your own)
+
+-   alpha
+
+    -   boolean to determine if you want to create alpha hull (will change to a vector of options)
+
+-   a
+
+    -   the alpha parameter to use
+
+-   type
+
+    -   need to change
+
+-   buffe_m
+
+    -   the buffer radius in meters
+
+```{r}
+#Load in the required packages
+  require(raster)
+  require(alphahull)
+  require(dismo)
+  require(rangeBuilder)
+```
+
+```{r}
+
+
+```
+<<<<<<< HEAD
+=======
+points requires a dataframe of points
+>>>>>>> fbdf935 (Starting up vignette for cleaning gbif data in order to troubleshoot some code)
+=======
+>>>>>>> a80744f (Improved speed of points2poly by commenting out the line checking if points were found within map boundaries. The cleaning stage should account for this, not the points 2 poly stage. Need to add to Clean_GBIF.)

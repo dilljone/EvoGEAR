@@ -1,5 +1,5 @@
-Package: EBGear
-Title: EBGEAR (Evolutionary, BioGeography and Ecology Analyses in R): A package for aiding biogeograpic and eco-evolutionary analyses
+Package: evogear
+Title: EvoGEAR (Evolutionary, BioGeography and Ecology Analyses in R): A package for aiding biogeograpic and eco-evolutionary analyses
 Version: 0.0.0.9000
 Authors@R: person(given = "Dillon",
            family = "Jones",

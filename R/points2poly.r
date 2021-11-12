@@ -5,11 +5,16 @@
 #'map created from map function (used to crop the circles to a landmass)
 #'
 #'
+<<<<<<< HEAD
+<<<<<<< HEAD
+#'
+points2Poly <- function(points,x = 'x', y = 'y', species = 'species', map,
+=======
 
 #gbif_raw <- read.delim("data/gbif.csv", header = TRUE, sep="\t")
 #save(gbif_raw, file = "data/gbif.Rdata")
 
-#load_all()
+#load_allsdf()
 
 
 df <- load('data/gbif.Rdata')
@@ -17,6 +22,11 @@ df <- load('data/gbif.Rdata')
 
 
   points2Poly <- function(points,x = 'x', y = 'y', species = 'species', map,
+>>>>>>> cc98be9 (See prior commit for changes to code. I messed up sorry :-()
+=======
+#'
+points2Poly <- function(points,x = 'x', y = 'y', species = 'species', map,
+>>>>>>> a80744f (Improved speed of points2poly by commenting out the line checking if points were found within map boundaries. The cleaning stage should account for this, not the points 2 poly stage. Need to add to Clean_GBIF.)
                         alpha = FALSE, a = 1,
                         type = 'All', buffer_m = 1000){
   require(raster)
@@ -31,10 +41,11 @@ df <- load('data/gbif.Rdata')
   coordinates(spdf) <- ~x+y
   projection(spdf) <- projection(map)
   spdf@data$species <- points$species
+  spdf@data$ID <- 1:nrow(spdf@data)
 
   #filtering records that are not on map (some species may be removed)
 
-  spdf <- raster::intersect(spdf,map)
+  #spdf <- raster::intersect(spdf,map)
 
   #make circles around each point. D is in meters. Convert to polygon
 
