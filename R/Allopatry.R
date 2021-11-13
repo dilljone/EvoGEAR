@@ -69,8 +69,8 @@
 
 Iterate_intersect <- function(spdf_in, raster_size = numeric()){
 
-  require('sf')
-  require(tidyverse)
+  # require(sf)
+  # require(tidyverse)
   output_matrix <- matrix(nrow = 1, ncol = 1, dimnames = list("row","Column"))
 
 
@@ -158,8 +158,8 @@ Iterate_intersect <- function(spdf_in, raster_size = numeric()){
 
 
 optimal_div <- function(spdf_in, min,max) {
-  require('sf')
-  require(tidyverse)
+  # require('sf')
+  # require(tidyverse)
   output_mat <- matrix(ncol = 2, nrow = 1)
   #convert SPDF to sf
   spdf_raw <- as(spdf_in,"sf")

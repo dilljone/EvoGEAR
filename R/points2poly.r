@@ -20,10 +20,10 @@
 points2Poly <- function(points,x = 'x', y = 'y', species = 'species', map,
                         alpha = FALSE, a = 1,
                         type = 'All', buffer_m = 1000){
-  require(raster)
-  require(alphahull)
-  require(dismo)
-  require(rangeBuilder)
+  # require(raster)
+  # require(alphahull)
+  # require(dismo)
+  # require(rangeBuilder)
 
   spdf <- points
 
