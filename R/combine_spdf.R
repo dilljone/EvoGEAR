@@ -33,16 +33,27 @@ combine_spdf <- function(input,
       x$binomial <- paste0("x$",binomial)
     }
 
+
+    if(length(unique(x@data$binomial)!=length(x@polygons))){
+
+      print(paste0('Dataset in index ',i,' has duplicate polygons per binomial. These polygons will be aggregated and any only ther binomial column will be kept.'))
+      x <- raster::aggregate(x, by = 'binomial', dissolve = TRUE)}
+
+    if(length(unique(y@data$binomial)!=length(y@polygons))){
+      print(paste0('Dataset in index ',i+1,' has duplicate polygons per binomial. These polygons will be aggregated and any only ther binomial column will be kept.'))
+
+      y <- raster::aggregate(y, by = 'binomial', dissolve = TRUE)}
+
     print('updating first spdf')
     #Merge x and y together to get consistent columns (technicalklky not needed)
     xy_merge <- merge(x@data, y@data, by = 'binomial', all.x = TRUE)
-    xy_merge <- xy_merge[!duplicated(xy_merge$binomial),]
+    xy_merge <- xy_merge[!duplicated(xy_merge$binomial),]%>%as.data.frame(.)
 
     print('updating second spdf')
 
     #Merge y and x together to get consistent columns
     yx_merge <- merge(y@data, x@data, by = 'binomial', all.x = TRUE)
-    yx_merge <- yx_merge[!duplicated(yx_merge$binomial),]
+    yx_merge <- yx_merge[!duplicated(yx_merge$binomial),]%>%as.data.frame(.)
 
     #used to update data
     x@data <- xy_merge
@@ -52,12 +63,15 @@ combine_spdf <- function(input,
     proj4string(x) <- proj4string(y)
 
     print('combining datasets')
-
+    print(i)
     #combine
     spec_poly<- rbind(x,y)
-    if(i == 1){spec_fin <- spec_poly}else{
+    print('i')
+    if(i == 1){print('here')
+      spec_fin <- spec_poly}else{
       spec_fin <- rbind(spec_fin,spec_poly)
-    }} else {if(length(input)==2){}else{
+    }} else {if(length(input)==2){print('hsere')}else{
+      print('here_2')
       x <- input[[i]]
       if(binomial == 'binomial'){}else{x$binomial <- paste0("x$",binomial)}
       x@data <- x@data$binomial
