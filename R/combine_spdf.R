@@ -3,7 +3,7 @@
 #'@param input a list of lists containing each spdf
 #'@param binomial Variable relating to the name of the column where binomials
 #'
-#'@example
+#'@examples
 #'    x <- pp
 #' y <- IUCN
 #' y <- y[y@data$legend == 'Extant (resident)',]
