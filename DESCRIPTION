@@ -29,5 +29,6 @@ Imports:
   CoordinateCleaner,
   alphahull,
   dismo,
-  rangeBuilder
+  rangeBuilder,
+  sf
   
