@@ -24,6 +24,7 @@ combine_spdf <- function(input,
 
   for(i in seq(1,length(input),by =2)){
     if(i < length(input)){
+      print(i)
     x <- input[[i]]
     y <- input[[i+1]]
 
@@ -63,15 +64,14 @@ combine_spdf <- function(input,
     proj4string(x) <- proj4string(y)
 
     print('combining datasets')
-    print(i)
+
     #combine
     spec_poly<- rbind(x,y)
-    print('i')
-    if(i == 1){print('here')
+
+    if(i == 1){
       spec_fin <- spec_poly}else{
       spec_fin <- rbind(spec_fin,spec_poly)
-    }} else {if(length(input)==2){print('hsere')}else{
-      print('here_2')
+    }} else {if(length(input)==2){}else{
       x <- input[[i]]
       if(binomial == 'binomial'){}else{x$binomial <- paste0("x$",binomial)}
       x@data <- x@data$binomial
