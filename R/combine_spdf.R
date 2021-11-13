@@ -23,7 +23,7 @@ combine_spdf <- function(input,
          binomial = 'binomial'){
 
   for(i in seq(1,length(input),by =2)){
-    if(i <= length(input)){
+    if(i < length(input)){
     x <- input[[i]]
     y <- input[[i+1]]
 
