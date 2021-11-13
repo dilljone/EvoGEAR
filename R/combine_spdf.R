@@ -57,12 +57,12 @@ combine_spdf <- function(input,
     spec_poly<- rbind(x,y)
     if(i == 1){spec_fin <- spec_poly}else{
       spec_fin <- rbind(spec_fin,spec_poly)
-    }} else {
+    }} else {if(length(input)==2){}else{
       x <- input[[i]]
       if(binomial == 'binomial'){}else{x$binomial <- paste0("x$",binomial)}
       x@data <- x@data$binomial
       spec_fin <- rbind(spec_fin,x)}
-
+}
   }
 
 print('aggregating')
