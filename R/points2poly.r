@@ -5,28 +5,8 @@
 #'map created from map function (used to crop the circles to a landmass)
 #'
 #'
-<<<<<<< HEAD
-<<<<<<< HEAD
-#'
+
 points2Poly <- function(points,x = 'x', y = 'y', species = 'species', map,
-=======
-
-#gbif_raw <- read.delim("data/gbif.csv", header = TRUE, sep="\t")
-#save(gbif_raw, file = "data/gbif.Rdata")
-
-#load_allsdf()
-
-
-df <- load('data/gbif.Rdata')
-
-
-
-  points2Poly <- function(points,x = 'x', y = 'y', species = 'species', map,
->>>>>>> cc98be9 (See prior commit for changes to code. I messed up sorry :-()
-=======
-#'
-points2Poly <- function(points,x = 'x', y = 'y', species = 'species', map,
->>>>>>> a80744f (Improved speed of points2poly by commenting out the line checking if points were found within map boundaries. The cleaning stage should account for this, not the points 2 poly stage. Need to add to Clean_GBIF.)
                         alpha = FALSE, a = 1,
                         type = 'All', buffer_m = 1000){
   require(raster)
