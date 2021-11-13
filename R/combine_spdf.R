@@ -19,7 +19,6 @@
 #'
 #'test <- combine_spdf(list[1:2])
 #'@export
-
 combine_spdf <- function(input,
          binomial = 'binomial'){
 
