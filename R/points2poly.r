@@ -1,11 +1,22 @@
-
 #'Create circles around points and/or alpha polygons(NEED TO TEST)
 #'
 #'Points as a dataframe with columns species, x, and y
 #'map created from map function (used to crop the circles to a landmass)
 #'
+#'@param points A dataframe containing at least the columns x, y, and sepcies
+#'@param x the column name for the x coord
+#'@param y the column name for the y coord
+#'@param species the column name for the species
+#'@param map a raster of the extent of the map
+#'@param alpha TRUE/FALSE for if to run Alpha_Huyll procedure
+#'@param a the amount of rounding to run alpha hull on
+#'@param type not gonna lie. I forgot. Not needed at the moment
+#'@param buffer_m amount of buffer in meters around each point
 #'
-
+#'
+#'
+#'
+#'@export
 points2Poly <- function(points,x = 'x', y = 'y', species = 'species', map,
                         alpha = FALSE, a = 1,
                         type = 'All', buffer_m = 1000){

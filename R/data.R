@@ -19,5 +19,5 @@
 #' paste0(nrow(gbif) - nrow(gbif_clean)," records were cleaned from the raw dataset")
 #'
 #' @source https://doi.org/10.15468/dl.c8gwtr
-'gbif.txt'
+#"inst/extdata/gbif.csv.gz"
 #'
