@@ -161,7 +161,6 @@ KDE_filter <- function(points, unispecies = TRUE, low_r = .25, up_r = .75, rec_m
   return(points_clean_kde)
 }
 
-
 ###Create map####
 mapcreate <- function(country_names){
 

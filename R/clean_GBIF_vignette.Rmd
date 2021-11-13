@@ -18,30 +18,16 @@ knitr::opts_chunk$set(
 library(tidyverse)
 ```
 
-Clean your codeasasdasd
+Clean your code
 
 Load in Data
 
 ```{r}
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-gbif_raw <- read.delim(system.file('extdata','gbif.csv', package = "EBGear"))
+gbif_raw <- read.csv(system.file('extdata','gbif.csv.gz', package = "evogear"))
 
 
 gbif_1 <- clean_gbif(gbif_raw)
-=======
-gbif_raw <- ressad.delim("data/gbif.csv", header = TRUE, sep="\t")
-
-
-gbif_1 <- clean_gbif(df_raw)
->>>>>>> fbdf935 (Starting up vignette for cleaning gbif data in order to troubleshoot some code)
-=======
-gbif_raw <- read.delim(system.file('extdata','gbif.csv', package = "EBGear"))
-
-
-gbif_1 <- clean_gbif(gbif_raw)
->>>>>>> a80744f (Improved speed of points2poly by commenting out the line checking if points were found within map boundaries. The cleaning stage should account for this, not the points 2 poly stage. Need to add to Clean_GBIF.)
 
 
 df_kde <- data.frame(species = gbif_1$species, 
@@ -58,15 +44,7 @@ Here we introduce the function points_to_poly.
 
 This function intends to take a dataframe of points and convert them into polygons. This can be done either by creating a circular plane around each point given a set diameter, through Alpha Hull, or via MCP.
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 It requires a few argumeasd:
-=======
-It requires a few argumeasdfnts:
->>>>>>> fbdf935 (Starting up vignette for cleaning gbif data in order to troubleshoot some code)
-=======
-It requires a few argumeasd:
->>>>>>> a80744f (Improved speed of points2poly by commenting out the line checking if points were found within map boundaries. The cleaning stage should account for this, not the points 2 poly stage. Need to add to Clean_GBIF.)
 
 ```{r}
   points2Poly <- function(points,x = 'x', y = 'y', species = 'species', map,
@@ -74,28 +52,22 @@ It requires a few argumeasd:
                         type = 'All', buffer_m = 1000){...}
 ```
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 -   points
 
-    -   a 3 column dataframe of points, where the columns are species, x, and y
+    a 3 column dataframe of points, where the columns are species, x, and y
 
 -   x
 
-    -   the column containing the x coords
-=======
+    the column containing the x coords
+
 -   points
 
-    -   a 3 column dataframe of points, where the columns are species, x, and y
+    - a 3 column dataframe of points, where the columns are species, x, and y
 
 -   x
 
-<<<<<<< HEAD
     -    the column containing the x coords
->>>>>>> a80744f (Improved speed of points2poly by commenting out the line checking if points were found within map boundaries. The cleaning stage should account for this, not the points 2 poly stage. Need to add to Clean_GBIF.)
-=======
-    -   the column containing the x coords
->>>>>>> 9efb85c (properly changed name to evogear)
+
 
 -   y
 
@@ -133,13 +105,3 @@ It requires a few argumeasd:
   require(rangeBuilder)
 ```
 
-```{r}
-
-
-```
-<<<<<<< HEAD
-=======
-points requires a dataframe of points
->>>>>>> fbdf935 (Starting up vignette for cleaning gbif data in order to troubleshoot some code)
-=======
->>>>>>> a80744f (Improved speed of points2poly by commenting out the line checking if points were found within map boundaries. The cleaning stage should account for this, not the points 2 poly stage. Need to add to Clean_GBIF.)
