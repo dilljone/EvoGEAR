@@ -1,9 +1,7 @@
-#'creates a simple map based on supplied country name list
+#' creates a simple map based on supplied country name list
 #'
-#'@param country_names A vector of country names to use
-#'@export
-
-
+#' @param country_names A vector of country names to use
+#' @export
 mapcreate <- function(country_names){
 
   require(maps)
