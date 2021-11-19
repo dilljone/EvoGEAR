@@ -3,4 +3,5 @@
 export(KDE_filter)
 export(clean_gbif)
 export(combine_spdf)
+export(mapcreate)
 export(points2Poly)
