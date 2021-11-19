@@ -6,6 +6,9 @@
 \usage{
 mapcreate(country_names)
 }
+\arguments{
+\item{country_names}{A vector of country names to use}
+}
 \description{
 creates a simple map based on supplied country name list
 }
