@@ -3,7 +3,7 @@
 #' @param country_names A vector of country names to use
 #'
 #'
-#'
+#'@export mapcreate
 mapcreate <- function(country_names){
 
   require(maps)
