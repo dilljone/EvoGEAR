@@ -459,5 +459,3 @@ sf_pres_ab <- function(x,y,x.unit,y.unit){
 
   return(mat)
 }
-
-pres_ab <- sf_pres_ab(shp_species,hydrobasin,'binomial','HYBAS_ID')
