@@ -38,9 +38,9 @@ df <- df %>%
   filter(.$decimalLongitude != ",")
 
 #remove records such as fossils
-#df <- filter(df, df$basisOfRecord == "HUMAN_OBSERVATION" |
- #              df$basisOfRecord == 'OBSERVATION' |
-  #             df$basisOfRecord == 'PRESERVED_SPECIMEN')
+df <- filter(df, df$basisOfRecord == "HUMAN_OBSERVATION" |
+            df$basisOfRecord == 'OBSERVATION' |
+            df$basisOfRecord == 'PRESERVED_SPECIMEN')
 
 df <- filter(df, is.numeric(df$coordinateUncertaintyInMeters) <= 50000)
 

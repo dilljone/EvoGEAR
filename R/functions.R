@@ -431,3 +431,33 @@ sp_list_amnh <- function(data){
     select(ID,Raw, level, Order, Superfamily,Family,Subfamily,Genus,Species,binomial)
   return(list(data_out,unique(data_out$binomial)))
 }
+
+# Presence absence matrix with 2 object input. Takes SF objects
+sf_pres_ab <- function(x,y,x.unit,y.unit){
+  require(sf)
+  require(tidyverse)
+  #add in checks for if function is sf or not
+  #add in checks that the units exist
+
+
+  inter <-st_intersects(x,y)
+  #outputs a list where each item in list is X
+  #the row number of y is given within each item x
+
+  mat <- matrix(nrow = nrow(x),ncol = nrow(y))
+  rownames(mat) <- pull(x,x.unit) #name the rows based on user input
+  colnames(mat) <- pull(y,y.unit) #name the cols based on user input
+
+  for(i in 1:length(inter)){
+
+    for(j in 1:length(inter[[i]])){
+
+      mat[i,inter[[i]][j]] = 1
+    }
+  }
+  mat[is.na(mat)] <- 0
+
+  return(mat)
+}
+
+pres_ab <- sf_pres_ab(shp_species,hydrobasin,'binomial','HYBAS_ID')
