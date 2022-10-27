@@ -12,7 +12,7 @@ require(CoordinateCleaner)
 print(nrow(df))
 df <- df[,c("gbifID","decimalLatitude","decimalLongitude",
             "coordinateUncertaintyInMeters","coordinatePrecision",
-            "scientificName",
+            "scientificName", "basisOfRecord",
             "class","order","family","genus","species")]
 
 if(!is.null(filter)){
