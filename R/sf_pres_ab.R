@@ -5,7 +5,7 @@
 #' @param x.unit the units of the x sf object. must be a column in the object
 #' @param y.unit the units of the y sf object. must be a column in the object
 #'
-#' @example coming soon
+#'
 #'
 #'
 #'@export
