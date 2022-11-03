@@ -12,15 +12,18 @@ sf_collapse <- function(sf, group_col){
   sf[is.na(sf)] <- "NA"
 
   func <- function(x){
-    x%>%
-      st_combine()%>%
-      st_union()
+
+    if(nrow(x[1]) == 1){}else{
+      paste0("Now collapsing polygons for ",x[[2]][1],
+             ". There are ",nrow(x[1]), " polygons.")%>%print()
+      x%>%st_union()}
+
   }
 
   #split by category and union it
   sf %>%
-    split(., f = .[[group_col]]) %>%
-    lapply(st_union) -> out
+    split(., f = .[[group_col]])%>%
+    lapply(func) -> out
 
   #grab labels here
   labels <- names(out)
