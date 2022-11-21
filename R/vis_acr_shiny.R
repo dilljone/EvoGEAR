@@ -3,6 +3,7 @@
 #'@param phylo is an object of class phylo with data related to states and their corresponding nodes
 #'@param sf is an object of class sf that contains the states for visualization
 #'@param state_list is a list of states and their frequencies. It should be named according to your nodes. Each node, needs an entry in the state list. Each dataframe in the list, should only have 2 columns, named state and freq in that order
+#'@param most_likely is a TRUE/FALSE value. TRUE indicates that only the most likely freq is shown. FALSE indicates that the probability is instead used to visualize
 #'
 #'@details For the phylo object, each node should have a corresponding list that represents the states and their frequencies.
 #' A common example output would be similar to that one provided by RASP. This list, should contain a single dataframe, with 2 columns.
@@ -17,21 +18,21 @@
 
 set.seed(123456)
 phylo <- ape::rtree(n = 20)
-phylo$node = 1:39
+phylo$node = paste0("node",1:39)
 
 
 for(i in 1:39){
 
   states[i] <- list(data.frame(state = sample(c("A",'B','C','D','AB','AC','AD','BC','BD','CD'),
                                                  5, replace = FALSE),
-                                  freq = sample(c(1,2,3,4,5),5, replace = FALSE)/15))}
+                                  freq = sample(c(1,2,3,4,5),5, replace = FALSE)/15))
 
-g <- ggtree(phylo)
+  names(states)[i] <- paste0("node",i)
 
-phylo$states
+    }
 
 
-vis_acr_shiny <- function(phylo, sf, state_list){
+vis_acr_shiny <- function(phylo, sf, state_list, most_likely){
 
   require(shiny)
   require(sf)
@@ -74,9 +75,8 @@ vis_acr_shiny <- function(phylo, sf, state_list){
 
     states <- reactive({
 
-      states_filt <- phylo$data$states[which(phylo$data$node == input$Node)]%>%
-        strsplit(., split = "")%>%
-        unlist()
+      states_filt <- state_list[Input$node]%>%arrange(freq)
+
 
       reg <- st_drop_geometry(sf)
 
