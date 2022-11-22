@@ -2,7 +2,7 @@
 #'
 #'@param phylo is an object of class phylo with data related to states and their corresponding nodes
 #'@param sf is an object of class sf that contains the states for visualization
-#'@param state_list is a list of states and their frequencies. It should be named according to your nodes. Each node, needs an entry in the state list. Each dataframe in the list, should only have 2 columns, named state and freq in that order
+#'@param state_list is a list of states and their frequencies. It should be named according to your nodes, and names must be just numbers (e.g. not node1, node2, node3 etc. Each node, needs an entry in the state list. Each dataframe in the list, should only have 2 columns, named state and freq in that order
 #'@param most_likely is a TRUE/FALSE value. TRUE indicates that only the most likely freq is shown. FALSE indicates that the probability is instead used to visualize
 #'
 #'@details For the phylo object, each node should have a corresponding list that represents the states and their frequencies.
@@ -18,8 +18,9 @@
 
 set.seed(123456)
 phylo <- ape::rtree(n = 20)
-phylo$node = paste0("node",1:39)
+phylo$node =1:39
 
+states = list()
 
 for(i in 1:39){
 
@@ -27,12 +28,15 @@ for(i in 1:39){
                                                  5, replace = FALSE),
                                   freq = sample(c(1,2,3,4,5),5, replace = FALSE)/15))
 
-  names(states)[i] <- paste0("node",i)
+  names(states)[i] <- paste0(i)
 
-    }
+}
 
+ML = TRUE
 
-vis_acr_shiny <- function(phylo, sf, state_list, most_likely){
+vis_acr_shiny <- function(phylo, sf, state_list, ML = TRUE){
+
+  #Load required packages
 
   require(shiny)
   require(sf)
@@ -40,16 +44,31 @@ vis_acr_shiny <- function(phylo, sf, state_list, most_likely){
   require(plotly)
   require(ggtree)
 
+  #blank states
   states_filt = ""
 
-  phylo <- ggtree(phylo)
+  #call ASR_list_2_df to convert a list of dataframes to a single dataframe
+  state_df <- ASR_list_2_df(states, ML = ML)
 
+  #create data frame
+  ML_state_df <- data.frame(node = state_df$node, ML_state = "")
+
+  #For loop to get the maximum liklihood states for each node
+
+  #From here we need to construct our data for use in the visualization
+
+  phylo_df <- merge(phylo_df,ML_state_df, by.x = "label", by.y = "node")
+
+
+ gg_phylo<-ggtree(phylo)#%<+% phylo_data_df
+
+# UI ####
   ui <- fluidPage(
 
     # Application title
     title("ASE Visualizer"),
     hr(),
-    selectInput('Node',"Node Number:",phylo$data$node),
+    selectInput('node',"Node Number:",phylo$data$node),
     hr(),
     fluidRow(column(7,
                     plotlyOutput("phylo")),
@@ -58,24 +77,26 @@ vis_acr_shiny <- function(phylo, sf, state_list, most_likely){
                     plotOutput('state'))
     )
   )
-
+# Server ####
   server <- function(input, output) {
 
     output$phylo <- renderPlotly({
 
-      p2 <- p2 +
+
+
+      p2 <- phylo_gg +
         geom_point(aes(x = x,
                        y = y,
-                       colour = states,
+                       colour = ML_state,
                        label = node))
-
+p2
       plotly::ggplotly(p2, tooltip = c('node','states'))
 
     })
 
     states <- reactive({
 
-      states_filt <- state_list[Input$node]%>%arrange(freq)
+      states_filt <- ML_state_df[which(node == Input$node)]%>%str_split(.,"")
 
 
       reg <- st_drop_geometry(sf)
