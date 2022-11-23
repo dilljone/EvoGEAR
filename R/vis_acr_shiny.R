@@ -46,7 +46,7 @@
 #'@export
 #'
 
-vis_acr_shiny <- function(phylo, sf, state_df){
+vis_acr_shiny <- function(phylo, sf, state_df, cellsize = 1){
 
   #Load required packages
 
@@ -116,7 +116,7 @@ vis_acr_shiny <- function(phylo, sf, state_df){
 
       sf%>%
         filter(col == "Present")%>%
-        st_make_grid(.,cellsize = .1, square = FALSE, what = "polygons")%>%
+        st_make_grid(.,cellsize = cellsize, square = FALSE, what = "polygons")%>%
         st_sf()%>%
         st_filter(sf%>%filter(col == "Present"), .pred = st_intersects)-> sf_pres
 
