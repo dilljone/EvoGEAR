@@ -4,16 +4,16 @@
 \alias{vis_acr_shiny}
 \title{vis_acr_shiny is meant to launch a shiny application that helps you visualize your Ancestral State Reconstructions}
 \usage{
-vis_acr_shiny(phylo, sf, state_df)
+vis_acr_shiny(phylo, sf, state_df, cellsize = 1)
 }
 \arguments{
 \item{phylo}{is an object of class phylo with data related to states and their corresponding nodes}
 
 \item{sf}{is an object of class sf that contains the states for visualization}
 
-\item{state_list}{is a list of states and their frequencies. It should be named according to your nodes, and names must be just numbers (e.g. not node1, node2, node3 etc. Each node, needs an entry in the state list. Each dataframe in the list, should only have 2 columns, named state and freq in that order}
+\item{state_df}{is a df of states and their frequencies. It should be named according to your nodes, and names must be just numbers (e.g. not node1, node2, node3 etc. Each node, needs an entry in the state list. Each dataframe in the list, should only have 2 columns, named state and freq in that order}
 
-\item{most_likely}{is a TRUE/FALSE value. TRUE indicates that only the most likely freq is shown. FALSE indicates that the probability is instead used to visualize}
+\item{cellsize}{I did a dumb thing}
 }
 \description{
 vis_acr_shiny is meant to launch a shiny application that helps you visualize your Ancestral State Reconstructions

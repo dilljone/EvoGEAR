@@ -2,9 +2,9 @@
 #'
 #'@param phylo is an object of class phylo with data related to states and their corresponding nodes
 #'@param sf is an object of class sf that contains the states for visualization
-#'@param state_list is a list of states and their frequencies. It should be named according to your nodes, and names must be just numbers (e.g. not node1, node2, node3 etc. Each node, needs an entry in the state list. Each dataframe in the list, should only have 2 columns, named state and freq in that order
-#'@param most_likely is a TRUE/FALSE value. TRUE indicates that only the most likely freq is shown. FALSE indicates that the probability is instead used to visualize
-#'@param cellsize
+#'@param state_df is a df of states and their frequencies. It should be named according to your nodes, and names must be just numbers (e.g. not node1, node2, node3 etc. Each node, needs an entry in the state list. Each dataframe in the list, should only have 2 columns, named state and freq in that order
+#'@param cellsize I did a dumb thing
+#'
 #'@details For the phylo object, each node should have a corresponding list that represents the states and their frequencies.
 #' A common example output would be similar to that one provided by RASP. This list, should contain a single dataframe, with 2 columns.
 #' The first column is the state, and the second column is the frequency.
