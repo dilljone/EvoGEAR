@@ -32,9 +32,24 @@ for(i in 1:39){
 
 }
 
-ML = TRUE
+#Make the SF test
+n1 = 2
 
-vis_acr_shiny <- function(phylo, sf, state_list, ML = TRUE){
+data1 <- data.frame(x = rep(1:n1, each = n1),    # Create data frame for raster
+                    y = rep(1:n1, n1),
+                    value = runif(n1^2))
+
+raster::rasterFromXYZ(data1)%>%
+  as(.,"SpatialPolygonsDataFrame")%>%
+  sf::st_as_sf() -> regions
+
+regions$state <- c('A','B','C','D')
+
+state_df <- ASR_list_2_df(states, ML = ML)
+
+vis_acr_shiny(phylo, regions, state_df)
+
+vis_acr_shiny <- function(phylo, sf, state_df){
 
   #Load required packages
 
@@ -48,19 +63,8 @@ vis_acr_shiny <- function(phylo, sf, state_list, ML = TRUE){
   states_filt = ""
 
   #call ASR_list_2_df to convert a list of dataframes to a single dataframe
-  state_df <- ASR_list_2_df(states, ML = ML)
 
-  #create data frame
-  ML_state_df <- data.frame(node = state_df$node, ML_state = "")
-
-  #For loop to get the maximum liklihood states for each node
-
-  #From here we need to construct our data for use in the visualization
-
-  phylo_df <- merge(phylo_df,ML_state_df, by.x = "label", by.y = "node")
-
-
- gg_phylo<-ggtree(phylo)#%<+% phylo_data_df
+  gg_phylo<-ggtree(phylo)%<+% state_df
 
 # UI ####
   ui <- fluidPage(
@@ -68,7 +72,7 @@ vis_acr_shiny <- function(phylo, sf, state_list, ML = TRUE){
     # Application title
     title("ASE Visualizer"),
     hr(),
-    selectInput('node',"Node Number:",phylo$data$node),
+    selectInput('node',"Node Number:",gg_phylo$data$node),
     hr(),
     fluidRow(column(7,
                     plotlyOutput("phylo")),
@@ -82,22 +86,21 @@ vis_acr_shiny <- function(phylo, sf, state_list, ML = TRUE){
 
     output$phylo <- renderPlotly({
 
-
-
-      p2 <- phylo_gg +
+      p2 <- gg_phylo +
         geom_point(aes(x = x,
                        y = y,
                        colour = ML_state,
                        label = node))
-p2
-      plotly::ggplotly(p2, tooltip = c('node','states'))
+
+      plotly::ggplotly(p2, tooltip = c('node','ML_state'))
 
     })
 
     states <- reactive({
 
-      states_filt <- ML_state_df[which(node == Input$node)]%>%str_split(.,"")
-
+      states_filt <- gg_phylo$data%>%
+        filter(node == as.numeric(input$node))%>% pull(ML_state)%>%
+        str_split(.,"")%>%unlist()
 
       reg <- st_drop_geometry(sf)
 
@@ -113,9 +116,17 @@ p2
 
       sf$col = reg$col
 
+
+      sf%>%
+        #filter(col == "Present")%>%
+        st_make_grid(.,cellsize = .5, square = FALSE) -> sf_pres
+
+      #THIS IS ALL FUCKED UP. NEED TO FIX
+
       p <- ggplot(data = sf)+
-        geom_sf(aes(fill = col))+
-        geom_sf_label(aes(label = state))
+        geom_sf(data = sf_pres, aes(fill = num))+
+        geom_sf_label(aes(label = state))+
+        scale_fill_gradientn(name = "regions", colours = terrain.colors(3))
 
       p
 

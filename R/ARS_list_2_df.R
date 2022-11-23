@@ -24,7 +24,7 @@ ASR_list_2_df <- function(list, ML = FALSE){
    arrange(state)%>%
              pull(state) -> state
 
- df <- data.frame(nodes = names(list))
+ df <- data.frame(nodes = as.numeric(names(list)))
 
  df[,2:(length(state)+1)] = 0
 
