@@ -8,46 +8,43 @@
 #'@details For the phylo object, each node should have a corresponding list that represents the states and their frequencies.
 #' A common example output would be similar to that one provided by RASP. This list, should contain a single dataframe, with 2 columns.
 #' The first column is the state, and the second column is the frequency.
+#'@examples
+#'set.seed(123456)
+#'phylo <- ape::rtree(n = 20)
+#'phylo$node =1:39
 #'
+#'states = list()
+#'
+#'for(i in 1:39){
+#'
+#'states[i] <- list(data.frame(state = sample(c("A",'B','C','D','AB','AC','AD','BC','BD','CD'),
+#'                                              5, replace = FALSE),
+#'                               freq = sample(c(1,2,3,4,5),5, replace = FALSE)/15))
+#'
+#'  names(states)[i] <- paste0(i)
+#'
+#'}
+#'
+#'#Make the SF test
+#'n1 = 2
+#'
+#'data1 <- data.frame(x = rep(1:n1, each = n1),    # Create data frame for raster
+#'                    y = rep(1:n1, n1),
+#'                    value = runif(n1^2))
+#'
+#'raster::rasterFromXYZ(data1)%>%
+#'  as(.,"SpatialPolygonsDataFrame")%>%
+#'  sf::st_as_sf() -> sf
+#'
+#'sf$state <- c('A','B','C','D')
+#'
+#'state_df <- ASR_list_2_df(states, ML = TRUE)
+#'
+#'vis_acr_shiny(phylo, regions, state_df)
 #'
 #'
 #'@export
 #'
-
-#where I left off, need to supply the list. Need to visualize with pie charts n shit. And do a better job so that you can visualize your stuff
-
-set.seed(123456)
-phylo <- ape::rtree(n = 20)
-phylo$node =1:39
-
-states = list()
-
-for(i in 1:39){
-
-  states[i] <- list(data.frame(state = sample(c("A",'B','C','D','AB','AC','AD','BC','BD','CD'),
-                                                 5, replace = FALSE),
-                                  freq = sample(c(1,2,3,4,5),5, replace = FALSE)/15))
-
-  names(states)[i] <- paste0(i)
-
-}
-
-#Make the SF test
-n1 = 2
-
-data1 <- data.frame(x = rep(1:n1, each = n1),    # Create data frame for raster
-                    y = rep(1:n1, n1),
-                    value = runif(n1^2))
-
-raster::rasterFromXYZ(data1)%>%
-  as(.,"SpatialPolygonsDataFrame")%>%
-  sf::st_as_sf() -> regions
-
-regions$state <- c('A','B','C','D')
-
-state_df <- ASR_list_2_df(states, ML = ML)
-
-vis_acr_shiny(phylo, regions, state_df)
 
 vis_acr_shiny <- function(phylo, sf, state_df){
 
@@ -118,17 +115,19 @@ vis_acr_shiny <- function(phylo, sf, state_df){
 
 
       sf%>%
-        #filter(col == "Present")%>%
-        st_make_grid(.,cellsize = .5, square = FALSE) -> sf_pres
+        filter(col == "Present")%>%
+        st_make_grid(.,cellsize = .1, square = FALSE, what = "polygons")%>%
+        st_sf()%>%
+        st_filter(sf%>%filter(col == "Present"), .pred = st_intersects)-> sf_pres
 
-      #THIS IS ALL FUCKED UP. NEED TO FIX
+     sf_fill <- sf_gradient_fill(sf%>%
+                                   filter(col == "Present"),sf_pres)
 
       p <- ggplot(data = sf)+
-        geom_sf(data = sf_pres, aes(fill = num))+
-        geom_sf_label(aes(label = state))+
-        scale_fill_gradientn(name = "regions", colours = terrain.colors(3))
+        geom_sf(fill ='white')+
+        geom_sf_label(aes(label = state))
 
-      p
+      p<- p+geom_sf(data = sf_fill,aes(fill = col))
 
       return(p)
     })

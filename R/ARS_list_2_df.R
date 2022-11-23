@@ -37,11 +37,13 @@ ASR_list_2_df <- function(list, ML = FALSE){
     df[i,list[[i]][j,'state']] <- list[[i]][j,'freq']
 
   }
+
+
 if(ML == TRUE){
 
   df$ML_state <- ""
 
-  for(i in 1:nrow(ML_state_df)){
+  for(i in 1:nrow(df)){
 
     df%>%
       dplyr::slice(i)%>%
