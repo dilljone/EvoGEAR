@@ -1,24 +1,51 @@
 #' RASP DEC results
+#'@param file is the file path to the RASP output dispersal file
 #'
 #'
 #'
 #'
-#'
+#'@export
 #'
 #'
 
-text <- read_delim(delim ="\r", "F:/My Drive/OneDrive/Research/Phyloregion_SDSU/Phyloregionalization_MA/Outputs/RASP_Squamate_DEC_results.txt")[,-2]
+read_RASP_dispersal <- function(file){
 
-t_pos <- which(text== "[TAXON]")
-p_pos <- which(text== "[TREE]")
-r_pos <- which(text== "[RESULT]")
+  require(tidyverse)
+  text <- read_table(skip_empty_rows = FALSE,
+                     col_names = FALSE,
+                     file)
+
+  text$X1 %>% as.vector() -> text
+
+  which(is.na(text)) -> na_vect
+
+  c(0,na_vect) -> na_vect
+
+  df <- data.frame(text = "")
+  for(i in 1:length(na_vect)){
+
+    j <- na_vect[i]
+
+    val <- paste(text[(j+1):(j+9)], collapse= " ")
+    df[i,] <- val
+
+  }
+
+  df <- df[-nrow(df),]%>%as.data.frame()
+
+  df%>%separate(col = 1, sep = " ",
+                into= c('Node','Event','Dispersal','Vicariance',
+                        'Extinction','Event_','Path','Prob','Probability'))%>%
+    select(Node,Dispersal,Vicariance,Extinction,Path,Probability)%>%
+    mutate(Node = gsub("NODE","",Node),
+           Node = gsub(":","",Node),
+           Dispersal = gsub("Dispersal:","",Dispersal),
+           Vicariance = gsub("Vicariance:","",Vicariance),
+           Extinction = gsub("Extinction:","",Extinction),
+           ML_state = str_extract(Path,"^[^-]*")) -> df
+
+  return(df)
+
+}
 
 
-taxa <- separate(data = text[t_pos+3:p_pos-2,1],
-           col = colnames(text[t_pos+3:p_pos-2,1]),
-           sep = '\\t',
-           into = c("tip",'species','state'))%>%as.data.frame()
-
-tree <- text[p_pos+1,]%>%pull()%>%ape::read.tree(text = .)
-
-results <- text[r_pos+2:nrow(text),1]
