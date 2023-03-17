@@ -25,7 +25,7 @@ sf_collapse <- function(sf, group_col){
     }
 
 
-    suppressMessages(x%>%st_combine()%>%st_union()-> out)
+    suppressMessages(x%>%st_union()%>%st_combine()-> out)
 
     return(out)
 
