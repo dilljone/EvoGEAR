@@ -7,7 +7,7 @@
 #'@export
 #'
 
-sf_collapse <- function(sf, group_col){
+sf_collapse_ <- function(sf, group_col){
   sf_use_s2(FALSE)
   sf[is.na(sf)] <- "NA"
 
